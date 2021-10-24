@@ -1,9 +1,27 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  combineReducers,
+  getDefaultMiddleware,
+} from '@reduxjs/toolkit';
+import { createHashHistory } from 'history';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 import counterReducer from '../features/counter/counterSlice';
 
+export const history = createHashHistory();
+
+export const reducer = combineReducers({
+  router: connectRouter(history),
+  counter: counterReducer,
+});
+
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
+  reducer,
+  middleware(getDefaultMiddleware) {
+    return getDefaultMiddleware({ serializableCheck: false }).concat(
+      routerMiddleware(history)
+    );
   },
 });
 
